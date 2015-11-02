@@ -1,0 +1,12 @@
+This directory contains the source of the TOTP (RFC6238) algorithm
+implemented in C.
+
+TOTP stands for "Time-based One-Time Password" which is an algorithm
+that extends the One-Time Password (OTP) algorithm, namely the HMAC-
+based One-Time Password (HOTP) algorithm (RFC4226) to support the
+time-based moving factor.
+
+This source implements RFC6238 in C and can be compiled to .so shared
+library for further uses.
+
+This source is free software. See the file COPYING for further notices.
