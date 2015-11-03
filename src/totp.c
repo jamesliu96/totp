@@ -71,8 +71,7 @@ void totp_hmac(const char *seed, time_t t, size_t len, char *token, size_t (*hma
     hash_t hash[MAX_LEN];
 
     // use passed hash function
-    size_t hash_len;
-    hash_len = hmac_f((hash_t *)seed, (hash_t *)key, hash);
+    hmac_f((hash_t *)seed, (hash_t *)key, hash);
 
     int os = hash[len - 1] & 0xf;
 

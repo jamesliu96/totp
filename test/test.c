@@ -17,19 +17,21 @@ int main(int argc, char **argv, char **env)
 
     size_t hash_len;
 
+    int i;
+
     hash_len = hmac_sha1((hash_t *)key, (hash_t *)msg, hash);
     printf("SHA1(%s, %s) (len = %ld)\n= ", key, msg, hash_len);
-    for (int i = 0; i < hash_len; i++) printf("%02x", hash[i]);
+    for (i = 0; i < hash_len; i++) printf("%02x", hash[i]);
     printf("\n");
 
     hash_len = hmac_sha256((hash_t *)key, (hash_t *)msg, hash);
     printf("SHA256(%s, %s) (len = %ld)\n= ", key, msg, hash_len);
-    for (int i = 0; i < hash_len; i++) printf("%02x", hash[i]);
+    for (i = 0; i < hash_len; i++) printf("%02x", hash[i]);
     printf("\n");
 
     hash_len = hmac_sha512((hash_t *)key, (hash_t *)msg, hash);
     printf("SHA512(%s, %s) (len = %ld)\n= ", key, msg, hash_len);
-    for (int i = 0; i < hash_len; i++) printf("%02x", hash[i]);
+    for (i = 0; i < hash_len; i++) printf("%02x", hash[i]);
     printf("\n");
 
     free(hash);
