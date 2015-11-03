@@ -34,11 +34,11 @@
 #define evp_sha512 EVP_sha512
 
 #ifndef KEY_LEN
-#define KEY_LEN 17
+#define KEY_LEN 16
 #endif
 
-#ifndef HASH_LEN
-#define HASH_LEN 21
+#ifndef MAX_LEN
+#define MAX_LEN 512
 #endif
 
 #ifdef __cplusplus
@@ -50,16 +50,17 @@ typedef EVP_MD evp_md_t;
 
 typedef unsigned char hash_t;
 
-void hmac_sha(const hash_t *key, const hash_t *msg, hash_t *hash, const evp_md_t *md);
+extern size_t hmac_sha(const hash_t *key, const hash_t *msg, hash_t *hash, const evp_md_t *md);
 
-void hmac_sha1(const hash_t *key, const hash_t *msg, hash_t *hash);
-void hmac_sha256(const hash_t *key, const hash_t *msg, hash_t *hash);
-void hmac_sha512(const hash_t *key, const hash_t *msg, hash_t *hash);
+extern size_t hmac_sha1(const hash_t *key, const hash_t *msg, hash_t *hash);
+extern size_t hmac_sha256(const hash_t *key, const hash_t *msg, hash_t *hash);
+extern size_t hmac_sha512(const hash_t *key, const hash_t *msg, hash_t *hash);
 
-void totp_hmac(const char *seed, const time_t t, const size_t len, char *token, void (*hmac_f)(const hash_t *, const hash_t *, hash_t *));
-void totp_hmac_sha1(const char *seed, const time_t t, const size_t len, char *token);
-void totp_hmac_sha256(const char *seed, const time_t t, const size_t len, char *token);
-void totp_hmac_sha512(const char *seed, const time_t t, const size_t len, char *token);
+extern void totp_hmac(const char *seed, const time_t t, const size_t len, char *token, size_t (*hmac_f)(const hash_t *, const hash_t *, hash_t *));
+
+extern void totp_hmac_sha1(const char *seed, const time_t t, const size_t len, char *token);
+extern void totp_hmac_sha256(const char *seed, const time_t t, const size_t len, char *token);
+extern void totp_hmac_sha512(const char *seed, const time_t t, const size_t len, char *token);
 
 #ifdef __cplusplus
 }

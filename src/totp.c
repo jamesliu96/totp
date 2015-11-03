@@ -26,39 +26,53 @@ const int DIGITS_POWER[]
 //  0  1   2    3     4      5       6        7         8
 = { 1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000 };
 
-void hmac_sha(const hash_t *key, const hash_t *msg, hash_t *hash, const evp_md_t *md)
+size_t hmac_sha(const hash_t *key, const hash_t *msg, hash_t *hash, const evp_md_t *md)
 {
+    size_t len;
+    hash_t buff[MAX_LEN];
     hmac_ctx_t ctx;
     hmac_ctx_init(&ctx);
     hmac_init(&ctx, key, strlen((char *)key), md);
     hmac_update(&ctx, msg, strlen((char *)msg));
-    hmac_final(&ctx, hash, NULL);
+    hmac_final(&ctx, buff, (unsigned int *)&len);
     hmac_ctx_cleanup(&ctx);
+    memcpy(hash, buff, len);
+    return len;
 }
 
-void hmac_sha1(const hash_t *key, const hash_t *msg, hash_t *hash)
+size_t hmac_sha1(const hash_t *key, const hash_t *msg, hash_t *hash)
 {
-    hmac_sha(key, msg, hash, evp_sha1());
+    return hmac_sha(key, msg, hash, evp_sha1());
 }
 
-void hmac_sha256(const hash_t *key, const hash_t *msg, hash_t *hash)
+size_t hmac_sha256(const hash_t *key, const hash_t *msg, hash_t *hash)
 {
-    hmac_sha(key, msg, hash, evp_sha256());
+    return hmac_sha(key, msg, hash, evp_sha256());
 }
 
-void hmac_sha512(const hash_t *key, const hash_t *msg, hash_t *hash)
+size_t hmac_sha512(const hash_t *key, const hash_t *msg, hash_t *hash)
 {
-    hmac_sha(key, msg, hash, evp_sha512());
+    return hmac_sha(key, msg, hash, evp_sha512());
 }
 
-void totp_hmac(const char *seed, time_t t, size_t len, char *token, void (*hmac_f)(const hash_t *, const hash_t *, hash_t *))
+void totp_hmac(const char *seed, time_t t, size_t len, char *token, size_t (*hmac_f)(const hash_t *, const hash_t *, hash_t *))
 {
+    if (len > 8) {
+        fprintf(stderr, "ERROR: selected length (%ld) exceeds maximum boundary.\n", len);
+        return;
+    }
+
+    // RFC4226
+    char key_buff[KEY_LEN + 1];
+    sprintf(key_buff, "%016ld", t / 30);
     char key[KEY_LEN];
+    memcpy(key, key_buff, KEY_LEN);
 
-    sprintf(key, "%016ld", t / 30);
+    hash_t hash[MAX_LEN];
 
-    hash_t hash[HASH_LEN];
-    hmac_f((hash_t *)seed, (hash_t *)key, hash);
+    // use passed hash function
+    size_t hash_len;
+    hash_len = hmac_f((hash_t *)seed, (hash_t *)key, hash);
 
     int os = hash[len - 1] & 0xf;
 
@@ -69,20 +83,25 @@ void totp_hmac(const char *seed, time_t t, size_t len, char *token, void (*hmac_
 
     int otp = bin % DIGITS_POWER[len];
 
+    // generate format string like "%06d" to fix digits using 0
     char format[5];
     sprintf(format, "%c0%ldd", '%', len);
 
-    sprintf(token, format, otp);
+    char token_buff[len + 1];
+    sprintf(token_buff, format, otp);
+    memcpy(token, token_buff, len);
 }
 
 void totp_hmac_sha1(const char *seed, const time_t t, const size_t len, char *token)
 {
     totp_hmac(seed, t, len, token, &hmac_sha1);
 }
+
 void totp_hmac_sha256(const char *seed, const time_t t, const size_t len, char *token)
 {
     totp_hmac(seed, t, len, token, &hmac_sha256);
 }
+
 void totp_hmac_sha512(const char *seed, const time_t t, const size_t len, char *token)
 {
     totp_hmac(seed, t, len, token, &hmac_sha512);
