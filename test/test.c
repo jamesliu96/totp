@@ -24,10 +24,16 @@ int main(int argc, char **argv, char **env)
     for (i = 0; i < hash_len; i++) printf("%02x", hash[i]);
     printf("\n");
 
+    free(hash);
+    hash = (hash_t *)malloc(sizeof(hash_t) * MAX_LEN);
+
     hash_len = hmac_sha256((hash_t *)key, (hash_t *)msg, hash);
     printf("SHA256(%s, %s) (len = %ld)\n= ", key, msg, hash_len);
     for (i = 0; i < hash_len; i++) printf("%02x", hash[i]);
     printf("\n");
+
+    free(hash);
+    hash = (hash_t *)malloc(sizeof(hash_t) * MAX_LEN);
 
     hash_len = hmac_sha512((hash_t *)key, (hash_t *)msg, hash);
     printf("SHA512(%s, %s) (len = %ld)\n= ", key, msg, hash_len);

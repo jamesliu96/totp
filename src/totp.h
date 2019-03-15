@@ -50,17 +50,17 @@ typedef EVP_MD evp_md_t;
 
 typedef unsigned char hash_t;
 
-extern size_t hmac_sha(const hash_t *key, const hash_t *msg, hash_t *hash, const evp_md_t *md);
+extern size_t hmac_sha(const hash_t *, const hash_t *, hash_t *, const evp_md_t *);
 
-extern size_t hmac_sha1(const hash_t *key, const hash_t *msg, hash_t *hash);
-extern size_t hmac_sha256(const hash_t *key, const hash_t *msg, hash_t *hash);
-extern size_t hmac_sha512(const hash_t *key, const hash_t *msg, hash_t *hash);
+extern size_t hmac_sha1(const hash_t *, const hash_t *, hash_t *);
+extern size_t hmac_sha256(const hash_t *, const hash_t *, hash_t *);
+extern size_t hmac_sha512(const hash_t *, const hash_t *, hash_t *);
 
-extern void totp_hmac(const char *seed, const time_t t, const size_t len, char *token, size_t (*hmac_f)(const hash_t *, const hash_t *, hash_t *));
+extern void totp_hmac(const char *, const time_t, const size_t, char *, size_t (*)(const hash_t *, const hash_t *, hash_t *));
 
-extern void totp_hmac_sha1(const char *seed, const time_t t, const size_t len, char *token);
-extern void totp_hmac_sha256(const char *seed, const time_t t, const size_t len, char *token);
-extern void totp_hmac_sha512(const char *seed, const time_t t, const size_t len, char *token);
+extern void totp_hmac_sha1(const char *, const time_t, const size_t, char *);
+extern void totp_hmac_sha256(const char *, const time_t, const size_t, char *);
+extern void totp_hmac_sha512(const char *, const time_t, const size_t, char *);
 
 #ifdef __cplusplus
 }
